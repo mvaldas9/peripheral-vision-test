@@ -367,7 +367,7 @@ function App() {
             className="blank-screen cursor-hide" 
             style={{ backgroundColor }}
           >
-            <div className="fixation-dot" style={{ backgroundColor: shapeColor }} />
+            <div className="fixation-cross" style={{ color: shapeColor }} />
             {renderDebugElements()}
           </div>
         );
@@ -378,7 +378,7 @@ function App() {
             className="cursor-hide"
             style={{ backgroundColor }}
           >
-            <div className="fixation-dot" style={{ backgroundColor: shapeColor }} />
+            <div className="fixation-cross" style={{ color: shapeColor }} />
             {getCurrentShape()}
             {renderDebugElements()}
           </div>
