@@ -212,10 +212,9 @@ function App() {
                 className="style-select"
               >
                 <option value={ShapeStyles.FILLED}>Užpildyta</option>
-                <option value={ShapeStyles.THICK_BORDER}>Storas kontūras</option>
-                <option value={ShapeStyles.THIN_BORDER}>Plonas kontūras</option>
-                <option value={ShapeStyles.THICK_BORDER_DASHED}>Storas brūkšninis kontūras</option>
-                <option value={ShapeStyles.THIN_BORDER_DASHED}>Plonas brūkšninis kontūras</option>
+                <option value={ShapeStyles.THIN_BORDER}>Kontūras</option>
+                <option value={ShapeStyles.THIN_BORDER_DASHED}>Brūkšninis kontūras</option>
+                <option value={ShapeStyles.DOTTED}>Taškelių kontūras</option>
               </select>
             </label>
           </div>

@@ -6,8 +6,8 @@ export const ShapeStyles = {
   FILLED: 'filled',
   THICK_BORDER: 'thick-border',
   THIN_BORDER: 'thin-border',
-  THICK_BORDER_DASHED: 'thick-border-dashed',
-  THIN_BORDER_DASHED: 'thin-border-dashed'
+  THIN_BORDER_DASHED: 'thin-border-dashed',
+  DOTTED: 'dotted'
 };
 
 const Shape = ({ 
@@ -44,7 +44,7 @@ const Shape = ({
       }
       case 'cross': {
         const thickness = size / (style === ShapeStyles.FILLED ? 10 : 
-          (style === ShapeStyles.THICK_BORDER || style === ShapeStyles.THICK_BORDER_DASHED ? 8 : 15));
+          (style === ShapeStyles.THICK_BORDER ? 8 : 15));
         const offset = thickness / Math.SQRT2;
         return (
           <path
@@ -72,12 +72,29 @@ const Shape = ({
     transition: 'transform 0.1s',
   } : {};
 
-  const strokeWidth = style === ShapeStyles.THICK_BORDER || style === ShapeStyles.THICK_BORDER_DASHED ? 3 
-    : (style === ShapeStyles.THIN_BORDER || style === ShapeStyles.THIN_BORDER_DASHED ? 1 : 0);
+  const getStrokeWidth = () => {
+    switch (style) {
+      case ShapeStyles.THICK_BORDER:
+        return 3;
+      case ShapeStyles.THIN_BORDER:
+      case ShapeStyles.THIN_BORDER_DASHED:
+      case ShapeStyles.DOTTED:
+        return 1;
+      default:
+        return 0;
+    }
+  };
 
-  const strokeDasharray = style === ShapeStyles.THICK_BORDER_DASHED ? '8 4'
-    : style === ShapeStyles.THIN_BORDER_DASHED ? '4 2'
-    : 'none';
+  const getStrokeDasharray = () => {
+    switch (style) {
+      case ShapeStyles.THIN_BORDER_DASHED:
+        return '4 2';
+      case ShapeStyles.DOTTED:
+        return '1 3';
+      default:
+        return 'none';
+    }
+  };
 
   return (
     <svg 
@@ -87,8 +104,9 @@ const Shape = ({
       className={isButton ? 'shape-button' : ''}
       fill={style === ShapeStyles.FILLED ? color : 'none'}
       stroke={style !== ShapeStyles.FILLED ? color : 'none'}
-      strokeWidth={strokeWidth}
-      strokeDasharray={strokeDasharray}
+      strokeWidth={getStrokeWidth()}
+      strokeDasharray={getStrokeDasharray()}
+      strokeLinecap={style === ShapeStyles.DOTTED ? 'round' : 'butt'}
     >
       {getShapePath()}
     </svg>
