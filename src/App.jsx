@@ -94,9 +94,9 @@ function App() {
     if (gameState !== GameStates.DISPLAY || !sequence[currentIndex]) return null;
 
     const { shape, position } = sequence[currentIndex];
-    const angle = (position * Math.PI) / 180;
-    const x = Math.cos(angle) * CIRCLE_RADIUS;
-    const y = Math.sin(angle) * CIRCLE_RADIUS;
+    const radian = ((position - 90) * Math.PI) / 180;
+    const x = Math.cos(radian) * CIRCLE_RADIUS;
+    const y = Math.sin(radian) * CIRCLE_RADIUS;
 
     return (
       <div
@@ -127,7 +127,7 @@ function App() {
           }}
         />
         {POSITIONS.map(angle => {
-          const radian = (angle * Math.PI) / 180;
+          const radian = ((angle - 90) * Math.PI) / 180;
           const x = Math.cos(radian) * CIRCLE_RADIUS;
           const y = Math.sin(radian) * CIRCLE_RADIUS;
 
