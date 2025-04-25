@@ -108,32 +108,27 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  animation: 
-    rotate-and-pulse-cross 2s linear infinite,
-    blink-cross 0.8s ease-in-out infinite;
+  transform: translate(-50%, -50%);
+  width: 24px;
+  height: 24px;
 }
 
-.fixation-cross::before,
-.fixation-cross::after {
-  content: '';
+.fixation-circle {
   position: absolute;
+  width: 4px;
+  height: 4px;
   background-color: currentColor;
-  transition: all 0.3s ease;
+  border-radius: 50%;
 }
 
-.fixation-cross::before {
-  width: 16px;
-  height: 2px;
-  left: -8px;
-  top: -1px;
-}
-
-.fixation-cross::after {
-  width: 2px;
-  height: 16px;
-  left: -1px;
-  top: -8px;
-}
+.fixation-circle:nth-child(1) { transform: translate(10px, 0); }
+.fixation-circle:nth-child(2) { transform: translate(7.07px, 7.07px); }
+.fixation-circle:nth-child(3) { transform: translate(0, 10px); }
+.fixation-circle:nth-child(4) { transform: translate(-7.07px, 7.07px); }
+.fixation-circle:nth-child(5) { transform: translate(-10px, 0); }
+.fixation-circle:nth-child(6) { transform: translate(-7.07px, -7.07px); }
+.fixation-circle:nth-child(7) { transform: translate(0, -10px); }
+.fixation-circle:nth-child(8) { transform: translate(7.07px, -7.07px); }
 
 .choice-container {
   text-align: center;

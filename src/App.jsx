@@ -419,7 +419,16 @@ function App() {
             className="app blank-screen cursor-hide" 
             style={{ backgroundColor }}
           >
-            <div className="fixation-cross" style={{ color: shapeColor }} />
+            <div className="fixation-cross" style={{ color: shapeColor }}>
+              <div className="fixation-circle"></div>
+              <div className="fixation-circle"></div>
+              <div className="fixation-circle"></div>
+              <div className="fixation-circle"></div>
+              <div className="fixation-circle"></div>
+              <div className="fixation-circle"></div>
+              <div className="fixation-circle"></div>
+              <div className="fixation-circle"></div>
+            </div>
             {renderDebugElements()}
           </div>
         );
@@ -430,7 +439,16 @@ function App() {
             className="app cursor-hide"
             style={{ backgroundColor }}
           >
-            <div className="fixation-cross" style={{ color: shapeColor }} />
+            <div className="fixation-cross" style={{ color: shapeColor }}>
+              <div className="fixation-circle"></div>
+              <div className="fixation-circle"></div>
+              <div className="fixation-circle"></div>
+              <div className="fixation-circle"></div>
+              <div className="fixation-circle"></div>
+              <div className="fixation-circle"></div>
+              <div className="fixation-circle"></div>
+              <div className="fixation-circle"></div>
+            </div>
             {getCurrentShape()}
             {renderDebugElements()}
           </div>
