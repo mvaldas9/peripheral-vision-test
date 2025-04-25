@@ -43,19 +43,52 @@ function App() {
   const [results, setResults] = useState([]);
   const [timer, setTimer] = useState(null);
   const [isDebugMode, setIsDebugMode] = useState(false);
-  const [pxPer10cm, setPxPer10cm] = useState(DEFAULT_PX_PER_10CM);
-  const [shapeSizeCm, setShapeSizeCm] = useState(DEFAULT_SHAPE_SIZE_CM);
-  const [circleRadiusCm, setCircleRadiusCm] = useState(DEFAULT_CIRCLE_RADIUS_CM);
-  const [shapeColor, setShapeColor] = useState(DEFAULT_SHAPE_COLOR);
-  const [backgroundColor, setBackgroundColor] = useState(DEFAULT_BACKGROUND_COLOR);
+  const [pxPer10cm, setPxPer10cm] = useState(() => {
+    const saved = localStorage.getItem('pxPer10cm');
+    return saved ? Number(saved) : DEFAULT_PX_PER_10CM;
+  });
+  const [shapeSizeCm, setShapeSizeCm] = useState(() => {
+    const saved = localStorage.getItem('shapeSizeCm');
+    return saved ? Number(saved) : DEFAULT_SHAPE_SIZE_CM;
+  });
+  const [circleRadiusCm, setCircleRadiusCm] = useState(() => {
+    const saved = localStorage.getItem('circleRadiusCm');
+    return saved ? Number(saved) : DEFAULT_CIRCLE_RADIUS_CM;
+  });
+  const [shapeColor, setShapeColor] = useState(() => {
+    return localStorage.getItem('shapeColor') || DEFAULT_SHAPE_COLOR;
+  });
+  const [backgroundColor, setBackgroundColor] = useState(() => {
+    return localStorage.getItem('backgroundColor') || DEFAULT_BACKGROUND_COLOR;
+  });
+  const [blankDuration, setBlankDuration] = useState(() => {
+    const saved = localStorage.getItem('blankDuration');
+    return saved ? Number(saved) : BLANK_SCREEN_DURATION;
+  });
+  const [shapeDuration, setShapeDuration] = useState(() => {
+    const saved = localStorage.getItem('shapeDuration');
+    return saved ? Number(saved) : SHAPE_DISPLAY_DURATION;
+  });
   
   const { circleRadius, shapeSize } = calculateSizes(pxPer10cm, shapeSizeCm, circleRadiusCm);
+
+  // Save settings to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('pxPer10cm', pxPer10cm);
+    localStorage.setItem('shapeSizeCm', shapeSizeCm);
+    localStorage.setItem('circleRadiusCm', circleRadiusCm);
+    localStorage.setItem('shapeColor', shapeColor);
+    localStorage.setItem('backgroundColor', backgroundColor);
+    localStorage.setItem('blankDuration', blankDuration);
+    localStorage.setItem('shapeDuration', shapeDuration);
+  }, [pxPer10cm, shapeSizeCm, circleRadiusCm, shapeColor, backgroundColor, blankDuration, shapeDuration]);
 
   const startGame = useCallback(() => {
     setSequence(generateGameSequence());
     setCurrentIndex(0);
     setResults([]);
     setGameState(GameStates.BLANK);
+    setIsDebugMode(false);
   }, []);
 
   const handleChoice = (selectedShape) => {
@@ -75,44 +108,44 @@ function App() {
     }
   };
 
-  useEffect(() => {
-    const handleKeyPress = (e) => {
-      if (e.code === 'Space' && gameState === GameStates.INTRO) {
-        e.preventDefault();
-        startGame();
-      } else if (e.code === 'KeyD') {
-        e.preventDefault();
-        setIsDebugMode(prev => !prev);
-      }
-    };
+  const handleKeyPress = useCallback((e) => {
+    if (e.code === 'Space' && gameState === GameStates.INTRO) {
+      e.preventDefault();
+      startGame();
+    } else if (e.code === 'KeyD') {
+      e.preventDefault();
+      setIsDebugMode(prev => !prev);
+    }
+  }, [gameState, startGame]);
 
+  useEffect(() => {
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [gameState, startGame]);
+  }, [handleKeyPress]);
 
   useEffect(() => {
     if (gameState === GameStates.BLANK) {
       clearTimeout(timer);
       const newTimer = setTimeout(() => {
         setGameState(GameStates.DISPLAY);
-      }, BLANK_SCREEN_DURATION);
+      }, blankDuration);
       setTimer(newTimer);
     } else if (gameState === GameStates.DISPLAY) {
       clearTimeout(timer);
       const newTimer = setTimeout(() => {
         setGameState(GameStates.POST_DISPLAY_BLANK);
-      }, SHAPE_DISPLAY_DURATION);
+      }, shapeDuration);
       setTimer(newTimer);
     } else if (gameState === GameStates.POST_DISPLAY_BLANK) {
       clearTimeout(timer);
       const newTimer = setTimeout(() => {
         setGameState(GameStates.CHOICE);
-      }, BLANK_SCREEN_DURATION);
+      }, blankDuration);
       setTimer(newTimer);
     }
 
     return () => clearTimeout(timer);
-  }, [gameState]);
+  }, [gameState, blankDuration, shapeDuration]);
 
   const renderCalibration = () => {
     if (!isDebugMode) return null;
@@ -181,6 +214,38 @@ function App() {
             />
           </label>
         </div>
+        <div className="calibration-input">
+          <label>
+            Tuščio ekrano trukmė (ms):
+            <input
+              type="number"
+              value={blankDuration}
+              onChange={(e) => setBlankDuration(Number(e.target.value))}
+              min="100"
+              max="5000"
+              step="100"
+            />
+          </label>
+        </div>
+        <div className="calibration-input">
+          <label>
+            Figūros rodymo trukmė (ms):
+            <input
+              type="number"
+              value={shapeDuration}
+              onChange={(e) => setShapeDuration(Number(e.target.value))}
+              min="50"
+              max="1000"
+              step="10"
+            />
+          </label>
+        </div>
+        <button 
+          className="start-button"
+          onClick={startGame}
+        >
+          Pradėti testą
+        </button>
       </div>
     );
   };
