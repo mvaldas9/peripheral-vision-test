@@ -11,8 +11,8 @@ export const CIRCLE_RADIUS = 278;
 export const SHAPE_SIZE = 59;
 
 // Timing constants (in milliseconds)
-export const BLANK_SCREEN_DURATION = 2000;
-export const SHAPE_DISPLAY_DURATION = 100;
+export const BLANK_SCREEN_DURATION = 10;
+export const SHAPE_DISPLAY_DURATION = 10;
 
 // Generate all possible combinations of shapes and positions
 export const generateGameSequence = () => {

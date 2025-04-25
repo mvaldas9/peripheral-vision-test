@@ -3,6 +3,7 @@ import Shape from './components/Shape';
 import {
   SHAPES,
   CIRCLE_RADIUS,
+  POSITIONS,
   BLANK_SCREEN_DURATION,
   SHAPE_DISPLAY_DURATION,
   generateGameSequence
@@ -24,6 +25,7 @@ function App() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [results, setResults] = useState([]);
   const [timer, setTimer] = useState(null);
+  const [isDebugMode, setIsDebugMode] = useState(false);
 
   const startGame = useCallback(() => {
     setSequence(generateGameSequence());
@@ -54,6 +56,9 @@ function App() {
       if (e.code === 'Space' && gameState === GameStates.INTRO) {
         e.preventDefault();
         startGame();
+      } else if (e.code === 'KeyD') {
+        e.preventDefault();
+        setIsDebugMode(prev => !prev);
       }
     };
 
@@ -109,6 +114,48 @@ function App() {
     );
   };
 
+  const renderDebugElements = () => {
+    if (!isDebugMode) return null;
+
+    return (
+      <>
+        <div 
+          className="debug-circle" 
+          style={{
+            width: CIRCLE_RADIUS * 2,
+            height: CIRCLE_RADIUS * 2,
+          }}
+        />
+        {POSITIONS.map(angle => {
+          const radian = (angle * Math.PI) / 180;
+          const x = Math.cos(radian) * CIRCLE_RADIUS;
+          const y = Math.sin(radian) * CIRCLE_RADIUS;
+
+          return (
+            <React.Fragment key={angle}>
+              <div
+                className="debug-position"
+                style={{
+                  top: `calc(50% + ${y}px)`,
+                  left: `calc(50% + ${x}px)`,
+                }}
+              />
+              <div
+                className="debug-label"
+                style={{
+                  top: `calc(50% + ${y * 1.1}px)`,
+                  left: `calc(50% + ${x * 1.1}px)`,
+                }}
+              >
+                {angle}°
+              </div>
+            </React.Fragment>
+          );
+        })}
+      </>
+    );
+  };
+
   const renderContent = () => {
     switch (gameState) {
       case GameStates.INTRO:
@@ -118,6 +165,7 @@ function App() {
             <p>Press SPACE to start the test</p>
             <p>You will see shapes appear briefly on the screen.</p>
             <p>Try to identify which shape you saw.</p>
+            <p className="debug-hint">Press 'D' to toggle debug mode</p>
           </div>
         );
 
@@ -126,6 +174,7 @@ function App() {
         return (
           <div className="blank-screen">
             <div className="fixation-dot" />
+            {renderDebugElements()}
           </div>
         );
 
@@ -134,6 +183,7 @@ function App() {
           <>
             <div className="fixation-dot" />
             {getCurrentShape()}
+            {renderDebugElements()}
           </>
         );
 
