@@ -123,10 +123,19 @@ function App() {
 
       case GameStates.BLANK:
       case GameStates.POST_DISPLAY_BLANK:
-        return <div className="blank-screen" />;
+        return (
+          <div className="blank-screen">
+            <div className="fixation-dot" />
+          </div>
+        );
 
       case GameStates.DISPLAY:
-        return getCurrentShape();
+        return (
+          <>
+            <div className="fixation-dot" />
+            {getCurrentShape()}
+          </>
+        );
 
       case GameStates.CHOICE:
         return (
