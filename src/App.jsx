@@ -19,6 +19,18 @@ const GameStates = {
   RESULTS: 'results'
 };
 
+// Translation function for shape names
+const translateShape = (shape) => {
+  const translations = {
+    circle: 'apskritimas',
+    square: 'kvadratas',
+    triangle: 'trikampis',
+    star: 'žvaigždė',
+    cross: 'kryžius'
+  };
+  return translations[shape] || shape;
+};
+
 function App() {
   const [gameState, setGameState] = useState(GameStates.INTRO);
   const [sequence, setSequence] = useState([]);
@@ -161,11 +173,11 @@ function App() {
       case GameStates.INTRO:
         return (
           <div className="intro">
-            <h1>Peripheral Vision Test</h1>
-            <p>Press SPACE to start the test</p>
-            <p>You will see shapes appear briefly on the screen.</p>
-            <p>Try to identify which shape you saw.</p>
-            <p className="debug-hint">Press 'D' to toggle debug mode</p>
+            <h1>Periferinio matymo testas</h1>
+            <p>Paspauskite TARPO klavišą, kad pradėtumėte testą</p>
+            <p>Ekrane trumpai pasirodys figūros.</p>
+            <p>Pabandykite atpažinti, kokią figūrą matėte.</p>
+            <p className="debug-hint">Paspauskite 'D' mygtuką, kad įjungtumėte derinimo režimą</p>
           </div>
         );
 
@@ -190,7 +202,7 @@ function App() {
       case GameStates.CHOICE:
         return (
           <div className="choice-container">
-            <h2>Which shape did you see?</h2>
+            <h2>Kokią figūrą matėte?</h2>
             <div className="shapes-grid">
               {SHAPES.map(shape => (
                 <div
@@ -208,29 +220,29 @@ function App() {
       case GameStates.RESULTS:
         return (
           <div className="results">
-            <h2>Test Results</h2>
+            <h2>Testo rezultatai</h2>
             <table>
               <thead>
                 <tr>
-                  <th>Position</th>
-                  <th>Shown Shape</th>
-                  <th>Chosen Shape</th>
-                  <th>Correct</th>
+                  <th>Pozicija</th>
+                  <th>Parodyta figūra</th>
+                  <th>Pasirinkta figūra</th>
+                  <th>Teisingai</th>
                 </tr>
               </thead>
               <tbody>
                 {results.map((result, index) => (
                   <tr key={index}>
                     <td>{result.position}°</td>
-                    <td>{result.shownShape}</td>
-                    <td>{result.chosenShape}</td>
+                    <td>{translateShape(result.shownShape)}</td>
+                    <td>{translateShape(result.chosenShape)}</td>
                     <td>{result.correct ? '✓' : '✗'}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
             <button onClick={startGame} className="restart-button">
-              Start New Test
+              Pradėti naują testą
             </button>
           </div>
         );
