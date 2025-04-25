@@ -60,7 +60,7 @@
 
 .intro {
   text-align: center;
-  max-width: 600px;
+  max-width: 900px;
   padding: 2rem;
 }
 
@@ -210,6 +210,89 @@ body {
 
 .debug-hint {
   margin-top: 2rem;
+  font-size: 0.9rem;
+  color: rgba(0, 0, 0, 0.5);
+  font-style: italic;
+}
+
+.calibration {
+  margin: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1rem;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px dashed #ccc;
+}
+
+.calibration-line {
+  position: relative;
+  height: 2px;
+  background: repeating-linear-gradient(
+    to right,
+    var(--primary-color) 0,
+    var(--primary-color) 6px,
+    transparent 6px,
+    transparent 12px
+  );
+}
+
+.calibration-line::before,
+.calibration-line::after {
+  content: '';
+  position: absolute;
+  width: 2px;
+  height: 20px;
+  background-color: var(--primary-color);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.calibration-line::before {
+  left: 0;
+}
+
+.calibration-line::after {
+  right: 0;
+}
+
+.calibration-input {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 300px;
+}
+
+.calibration-input label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  text-align: center;
+}
+
+.calibration-input input {
+  width: 120px;
+  padding: 0.5rem;
+  border: 1px solid var(--primary-color);
+  border-radius: 4px;
+  text-align: center;
+  font-size: 1rem;
+}
+
+.calibration-input input:focus {
+  outline: none;
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.calibration-hint {
   font-size: 0.9rem;
   color: rgba(0, 0, 0, 0.5);
   font-style: italic;

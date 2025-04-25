@@ -1,9 +1,9 @@
 import React from 'react';
-import { SHAPE_SIZE } from '../constants';
 
-const Shape = ({ type, position = 0, isButton = false }) => {
+const DEFAULT_SIZE = 60;
+
+const Shape = ({ type, position = 0, isButton = false, size = DEFAULT_SIZE }) => {
   const getShapePath = () => {
-    const size = SHAPE_SIZE;
     const half = size / 2;
     
     switch (type) {
@@ -49,8 +49,8 @@ const Shape = ({ type, position = 0, isButton = false }) => {
 
   return (
     <svg 
-      width={SHAPE_SIZE} 
-      height={SHAPE_SIZE} 
+      width={size} 
+      height={size} 
       style={style}
       className={isButton ? 'shape-button' : ''}
     >

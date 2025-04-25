@@ -2,11 +2,14 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Shape from './components/Shape';
 import {
   SHAPES,
-  CIRCLE_RADIUS,
   POSITIONS,
+  DEFAULT_PX_PER_10CM,
+  DEFAULT_SHAPE_SIZE_CM,
+  DEFAULT_CIRCLE_RADIUS_CM,
   BLANK_SCREEN_DURATION,
   SHAPE_DISPLAY_DURATION,
-  generateGameSequence
+  generateGameSequence,
+  calculateSizes
 } from './constants';
 import './App.css';
 
@@ -38,6 +41,11 @@ function App() {
   const [results, setResults] = useState([]);
   const [timer, setTimer] = useState(null);
   const [isDebugMode, setIsDebugMode] = useState(false);
+  const [pxPer10cm, setPxPer10cm] = useState(DEFAULT_PX_PER_10CM);
+  const [shapeSizeCm, setShapeSizeCm] = useState(DEFAULT_SHAPE_SIZE_CM);
+  const [circleRadiusCm, setCircleRadiusCm] = useState(DEFAULT_CIRCLE_RADIUS_CM);
+  
+  const { circleRadius, shapeSize } = calculateSizes(pxPer10cm, shapeSizeCm, circleRadiusCm);
 
   const startGame = useCallback(() => {
     setSequence(generateGameSequence());
@@ -102,26 +110,53 @@ function App() {
     return () => clearTimeout(timer);
   }, [gameState]);
 
-  const getCurrentShape = () => {
-    if (gameState !== GameStates.DISPLAY || !sequence[currentIndex]) return null;
-
-    const { shape, position } = sequence[currentIndex];
-    const radian = ((position - 90) * Math.PI) / 180;
-    const x = Math.cos(radian) * CIRCLE_RADIUS;
-    const y = Math.sin(radian) * CIRCLE_RADIUS;
+  const renderCalibration = () => {
+    if (!isDebugMode) return null;
 
     return (
-      <div
-        style={{
-          position: 'absolute',
-          transform: `translate(${x}px, ${y}px)`,
-          top: '50%',
-          left: '50%',
-          marginLeft: '-29.5px',
-          marginTop: '-29.5px'
-        }}
-      >
-        <Shape type={shape} />
+      <div className="calibration">
+        <div className="calibration-line" style={{ width: pxPer10cm }} />
+        <div className="calibration-hint">
+          Ši atkarpa turėtų būti lygiai 10 centimetrų
+        </div>
+        <div className="calibration-input">
+          <label>
+            Pikselių skaičius 10 centimetrų atkarpai:
+            <input
+              type="number"
+              value={pxPer10cm}
+              onChange={(e) => setPxPer10cm(Number(e.target.value))}
+              min="100"
+              max="2000"
+            />
+          </label>
+        </div>
+        <div className="calibration-input">
+          <label>
+            Figūros dydis (cm):
+            <input
+              type="number"
+              value={shapeSizeCm}
+              onChange={(e) => setShapeSizeCm(Number(e.target.value))}
+              min="0.1"
+              max="10"
+              step="0.01"
+            />
+          </label>
+        </div>
+        <div className="calibration-input">
+          <label>
+            Apskritimo spindulys (cm):
+            <input
+              type="number"
+              value={circleRadiusCm}
+              onChange={(e) => setCircleRadiusCm(Number(e.target.value))}
+              min="1"
+              max="50"
+              step="0.01"
+            />
+          </label>
+        </div>
       </div>
     );
   };
@@ -134,14 +169,14 @@ function App() {
         <div 
           className="debug-circle" 
           style={{
-            width: CIRCLE_RADIUS * 2,
-            height: CIRCLE_RADIUS * 2,
+            width: circleRadius * 2,
+            height: circleRadius * 2,
           }}
         />
         {POSITIONS.map(angle => {
           const radian = ((angle - 90) * Math.PI) / 180;
-          const x = Math.cos(radian) * CIRCLE_RADIUS;
-          const y = Math.sin(radian) * CIRCLE_RADIUS;
+          const x = Math.cos(radian) * circleRadius;
+          const y = Math.sin(radian) * circleRadius;
 
           return (
             <React.Fragment key={angle}>
@@ -168,6 +203,30 @@ function App() {
     );
   };
 
+  const getCurrentShape = () => {
+    if (gameState !== GameStates.DISPLAY || !sequence[currentIndex]) return null;
+
+    const { shape, position } = sequence[currentIndex];
+    const radian = ((position - 90) * Math.PI) / 180;
+    const x = Math.cos(radian) * circleRadius;
+    const y = Math.sin(radian) * circleRadius;
+
+    return (
+      <div
+        style={{
+          position: 'absolute',
+          transform: `translate(${x}px, ${y}px)`,
+          top: '50%',
+          left: '50%',
+          marginLeft: `-${shapeSize / 2}px`,
+          marginTop: `-${shapeSize / 2}px`
+        }}
+      >
+        <Shape type={shape} size={shapeSize} />
+      </div>
+    );
+  };
+
   const renderContent = () => {
     switch (gameState) {
       case GameStates.INTRO:
@@ -178,6 +237,7 @@ function App() {
             <p>Ekrane trumpai pasirodys figūros.</p>
             <p>Pabandykite atpažinti, kokią figūrą matėte.</p>
             <p className="debug-hint">Paspauskite 'D' mygtuką, kad įjungtumėte derinimo režimą</p>
+            {renderCalibration()}
           </div>
         );
 
@@ -210,7 +270,7 @@ function App() {
                   onClick={() => handleChoice(shape)}
                   className="shape-choice"
                 >
-                  <Shape type={shape} isButton />
+                  <Shape type={shape} isButton size={shapeSize} />
                 </div>
               ))}
             </div>

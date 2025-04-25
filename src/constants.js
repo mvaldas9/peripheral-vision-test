@@ -4,14 +4,19 @@ export const SHAPES = ['circle', 'square', 'triangle', 'star', 'cross'];
 // Game positions in degrees and their coordinates on a circle
 export const POSITIONS = [0, 45, 90, 135, 180, 225, 270, 315];
 
-// Conversion ratio: 50.5px = 1cm
-const PX_PER_CM = 50.5;
+// Default calibration values
+export const DEFAULT_PX_PER_10CM = 505;
+export const DEFAULT_SHAPE_SIZE_CM = 1.57;
+export const DEFAULT_CIRCLE_RADIUS_CM = 7.37;
 
-// Circle radius in pixels (7.37cm * 50.5px/cm ≈ 372px)
-export const CIRCLE_RADIUS = Math.round(7.37 * PX_PER_CM);
-
-// Shape size in pixels (1.57cm * 50.5px/cm ≈ 79px)
-export const SHAPE_SIZE = Math.round(1.57 * PX_PER_CM);
+// Helper function to calculate sizes based on pixels per 10cm
+export const calculateSizes = (pxPer10cm, shapeSizeCm, circleRadiusCm) => {
+  const pxPerCm = pxPer10cm / 10;
+  return {
+    circleRadius: Math.round(circleRadiusCm * pxPerCm),
+    shapeSize: Math.round(shapeSizeCm * pxPerCm)
+  };
+};
 
 // Timing constants (in milliseconds)
 export const BLANK_SCREEN_DURATION = 3000;
