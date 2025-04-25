@@ -156,110 +156,143 @@ function App() {
 
     return (
       <div className="calibration">
-        <div className="calibration-line" style={{ width: pxPer10cm }} />
-        <div className="calibration-hint">
-          Ši atkarpa turėtų būti lygiai 10 centimetrų
+        {/* Screen calibration section */}
+        <div className="calibration-section">
+          <h3>Ekrano kalibravimas</h3>
+          <div className="calibration-line" style={{ width: pxPer10cm }} />
+          <div className="calibration-hint">
+            Ši atkarpa turėtų būti lygiai 10 centimetrų
+          </div>
+          <div className="calibration-input">
+            <label>
+              Pikselių skaičius 10 centimetrų atkarpai:
+              <input
+                type="number"
+                value={pxPer10cm}
+                onChange={(e) => setPxPer10cm(Number(e.target.value))}
+                min="100"
+                max="2000"
+              />
+            </label>
+          </div>
         </div>
-        <div className="calibration-input">
-          <label>
-            Pikselių skaičius 10 centimetrų atkarpai:
-            <input
-              type="number"
-              value={pxPer10cm}
-              onChange={(e) => setPxPer10cm(Number(e.target.value))}
-              min="100"
-              max="2000"
-            />
-          </label>
+
+        {/* Shape appearance section */}
+        <div className="calibration-section">
+          <h3>Figūros išvaizda</h3>
+          <div className="preview-container">
+            <div className="preview-shape">
+              <Shape 
+                type="star" 
+                size={shapeSize} 
+                color={shapeColor} 
+                style={shapeStyle}
+              />
+            </div>
+          </div>
+          <div className="calibration-input">
+            <label>
+              Figūros dydis (cm):
+              <input
+                type="number"
+                value={shapeSizeCm}
+                onChange={(e) => setShapeSizeCm(Number(e.target.value))}
+                min="0.1"
+                max="10"
+                step="0.01"
+              />
+            </label>
+          </div>
+          <div className="calibration-input">
+            <label>
+              Figūros stilius:
+              <select
+                value={shapeStyle}
+                onChange={(e) => setShapeStyle(e.target.value)}
+                className="style-select"
+              >
+                <option value={ShapeStyles.FILLED}>Užpildyta</option>
+                <option value={ShapeStyles.THICK_BORDER}>Storas kontūras</option>
+                <option value={ShapeStyles.THIN_BORDER}>Plonas kontūras</option>
+                <option value={ShapeStyles.THICK_BORDER_DASHED}>Storas brūkšninis kontūras</option>
+                <option value={ShapeStyles.THIN_BORDER_DASHED}>Plonas brūkšninis kontūras</option>
+              </select>
+            </label>
+          </div>
+          <div className="calibration-input">
+            <label>
+              Figūros spalva:
+              <input
+                type="color"
+                value={shapeColor}
+                onChange={(e) => setShapeColor(e.target.value)}
+              />
+            </label>
+          </div>
         </div>
-        <div className="calibration-input">
-          <label>
-            Figūros dydis (cm):
-            <input
-              type="number"
-              value={shapeSizeCm}
-              onChange={(e) => setShapeSizeCm(Number(e.target.value))}
-              min="0.1"
-              max="10"
-              step="0.01"
-            />
-          </label>
+
+        {/* Test configuration section */}
+        <div className="calibration-section">
+          <h3>Testo nustatymai</h3>
+          <div className="calibration-input">
+            <label>
+              Apskritimo spindulys (cm):
+              <input
+                type="number"
+                value={circleRadiusCm}
+                onChange={(e) => setCircleRadiusCm(Number(e.target.value))}
+                min="1"
+                max="50"
+                step="0.01"
+              />
+            </label>
+          </div>
+          <div className="calibration-input">
+            <label>
+              Tuščio ekrano trukmė (ms):
+              <input
+                type="number"
+                value={blankDuration}
+                onChange={(e) => setBlankDuration(Number(e.target.value))}
+                min="100"
+                max="5000"
+                step="100"
+              />
+            </label>
+          </div>
+          <div className="calibration-input">
+            <label>
+              Figūros rodymo trukmė (ms):
+              <input
+                type="number"
+                value={shapeDuration}
+                onChange={(e) => setShapeDuration(Number(e.target.value))}
+                min="50"
+                max="1000"
+                step="10"
+              />
+            </label>
+          </div>
         </div>
-        <div className="calibration-input">
-          <label>
-            Apskritimo spindulys (cm):
-            <input
-              type="number"
-              value={circleRadiusCm}
-              onChange={(e) => setCircleRadiusCm(Number(e.target.value))}
-              min="1"
-              max="50"
-              step="0.01"
-            />
-          </label>
+
+        {/* Background color section */}
+        <div className="calibration-section">
+          <h3>Fono spalva</h3>
+          <div className="preview-container" style={{ backgroundColor }}>
+            <div className="color-preview" />
+          </div>
+          <div className="calibration-input">
+            <label>
+              Pasirinkti spalvą:
+              <input
+                type="color"
+                value={backgroundColor}
+                onChange={(e) => setBackgroundColor(e.target.value)}
+              />
+            </label>
+          </div>
         </div>
-        <div className="calibration-input">
-          <label>
-            Figūros spalva:
-            <input
-              type="color"
-              value={shapeColor}
-              onChange={(e) => setShapeColor(e.target.value)}
-            />
-          </label>
-        </div>
-        <div className="calibration-input">
-          <label>
-            Fono spalva:
-            <input
-              type="color"
-              value={backgroundColor}
-              onChange={(e) => setBackgroundColor(e.target.value)}
-            />
-          </label>
-        </div>
-        <div className="calibration-input">
-          <label>
-            Tuščio ekrano trukmė (ms):
-            <input
-              type="number"
-              value={blankDuration}
-              onChange={(e) => setBlankDuration(Number(e.target.value))}
-              min="100"
-              max="5000"
-              step="100"
-            />
-          </label>
-        </div>
-        <div className="calibration-input">
-          <label>
-            Figūros rodymo trukmė (ms):
-            <input
-              type="number"
-              value={shapeDuration}
-              onChange={(e) => setShapeDuration(Number(e.target.value))}
-              min="50"
-              max="1000"
-              step="10"
-            />
-          </label>
-        </div>
-        <div className="calibration-input">
-          <label>
-            Figūros stilius:
-            <select
-              value={shapeStyle}
-              onChange={(e) => setShapeStyle(e.target.value)}
-              className="style-select"
-            >
-              <option value={ShapeStyles.FILLED}>Užpildyta</option>
-              <option value={ShapeStyles.THICK_BORDER}>Storas kontūras</option>
-              <option value={ShapeStyles.THIN_BORDER}>Plonas kontūras</option>
-              <option value={ShapeStyles.THICK_BORDER_DASHED}>Storas brūkšninis kontūras</option>
-              <option value={ShapeStyles.THIN_BORDER_DASHED}>Plonas brūkšninis kontūras</option>
-            </select>
-          </label>
-        </div>
+
         <button 
           className="start-button"
           onClick={startGame}
@@ -384,7 +417,7 @@ function App() {
       case GameStates.POST_DISPLAY_BLANK:
         return (
           <div 
-            className="blank-screen cursor-hide" 
+            className="app blank-screen cursor-hide" 
             style={{ backgroundColor }}
           >
             <div className="fixation-cross" style={{ color: shapeColor }} />
@@ -395,7 +428,7 @@ function App() {
       case GameStates.DISPLAY:
         return (
           <div 
-            className="cursor-hide"
+            className="app cursor-hide"
             style={{ backgroundColor }}
           >
             <div className="fixation-cross" style={{ color: shapeColor }} />
@@ -407,7 +440,7 @@ function App() {
       case GameStates.CHOICE:
         return (
           <div 
-            className="choice-container"
+            className="app choice-container"
             style={{ backgroundColor }}
           >
             <h2 style={{ color: shapeColor }}>Kokią figūrą matėte?</h2>
@@ -468,9 +501,9 @@ function App() {
   };
 
   return (
-    <div className="app">
+    <>
       {renderContent()}
-    </div>
+    </>
   );
 }
 
