@@ -31,7 +31,8 @@ const translateShape = (shape) => {
     square: 'kvadratas',
     triangle: 'trikampis',
     star: 'žvaigždė',
-    cross: 'kryžius'
+    cross: 'kryžius',
+    unknown: 'nežinau'
   };
   return translations[shape] || shape;
 };
@@ -43,6 +44,7 @@ function App() {
   const [results, setResults] = useState([]);
   const [timer, setTimer] = useState(null);
   const [isDebugMode, setIsDebugMode] = useState(false);
+  const [fixationShape, setFixationShape] = useState(null);
   const [pxPer10cm, setPxPer10cm] = useState(() => {
     const saved = localStorage.getItem('pxPer10cm');
     return saved ? Number(saved) : DEFAULT_PX_PER_10CM;
@@ -72,6 +74,8 @@ function App() {
   const [shapeStyle, setShapeStyle] = useState(() => {
     return localStorage.getItem('shapeStyle') || ShapeStyles.FILLED;
   });
+  const [selectedPeripheralShape, setSelectedPeripheralShape] = useState(null);
+  const [selectedFixationShape, setSelectedFixationShape] = useState(null);
   
   const { circleRadius, shapeSize } = calculateSizes(pxPer10cm, shapeSizeCm, circleRadiusCm);
 
@@ -93,22 +97,40 @@ function App() {
     setResults([]);
     setGameState(GameStates.BLANK);
     setIsDebugMode(false);
+    setFixationShape(SHAPES[Math.floor(Math.random() * SHAPES.length)]);
   }, []);
 
-  const handleChoice = (selectedShape) => {
-    const current = sequence[currentIndex];
-    setResults(prev => [...prev, {
-      position: current.position,
-      shownShape: current.shape,
-      chosenShape: selectedShape,
-      correct: current.shape === selectedShape
-    }]);
-
-    if (currentIndex === sequence.length - 1) {
-      setGameState(GameStates.RESULTS);
+  const handleChoice = (selectedShape, isPeripheral) => {
+    if (isPeripheral) {
+      setSelectedPeripheralShape(selectedShape);
     } else {
-      setCurrentIndex(prev => prev + 1);
-      setGameState(GameStates.BLANK);
+      setSelectedFixationShape(selectedShape);
+    }
+
+    // If both shapes have been selected, proceed
+    if ((isPeripheral && selectedFixationShape) || (!isPeripheral && selectedPeripheralShape)) {
+      const current = sequence[currentIndex];
+      setResults(prev => [...prev, {
+        position: current.position,
+        shownShape: current.shape,
+        chosenPeripheralShape: isPeripheral ? selectedShape : selectedPeripheralShape,
+        correctPeripheral: current.shape === (isPeripheral ? selectedShape : selectedPeripheralShape),
+        fixationShape: fixationShape,
+        chosenFixationShape: isPeripheral ? selectedFixationShape : selectedShape,
+        correctFixation: fixationShape === (isPeripheral ? selectedFixationShape : selectedShape)
+      }]);
+
+      if (currentIndex === sequence.length - 1) {
+        setGameState(GameStates.RESULTS);
+      } else {
+        setCurrentIndex(prev => prev + 1);
+        setGameState(GameStates.BLANK);
+        setFixationShape(SHAPES[Math.floor(Math.random() * SHAPES.length)]);
+      }
+      
+      // Reset selections for next round
+      setSelectedPeripheralShape(null);
+      setSelectedFixationShape(null);
     }
   };
 
@@ -370,14 +392,25 @@ function App() {
 
   const copyResultsToClipboard = () => {
     // Create header
-    const header = ['Pozicija', 'Parodyta figūra', 'Pasirinkta figūra', 'Teisingai'].join('\t');
+    const header = [
+      'Pozicija',
+      'Parodyta periferinė figūra',
+      'Pasirinkta periferinė figūra',
+      'Periferinė teisingai',
+      'Parodyta centrinė figūra',
+      'Pasirinkta centrinė figūra',
+      'Centrinė teisingai'
+    ].join('\t');
     
     // Create rows
     const rows = results.map(result => [
       `${result.position}°`,
       translateShape(result.shownShape),
-      translateShape(result.chosenShape),
-      result.correct ? '1' : '0'
+      translateShape(result.chosenPeripheralShape),
+      result.correctPeripheral ? '1' : '0',
+      translateShape(result.fixationShape),
+      translateShape(result.chosenFixationShape),
+      result.correctFixation ? '1' : '0'
     ].join('\t'));
 
     // Combine header and rows
@@ -386,7 +419,6 @@ function App() {
     // Copy to clipboard
     navigator.clipboard.writeText(textToCopy)
       .then(() => {
-        // Visual feedback that copy was successful
         const button = document.getElementById('copy-button');
         button.textContent = 'Nukopijuota!';
         setTimeout(() => {
@@ -419,7 +451,7 @@ function App() {
             className="app blank-screen cursor-hide" 
             style={{ backgroundColor }}
           >
-            <div className="fixation-cross" style={{ color: shapeColor }}>
+            <div className="fixation-symbol" style={{ color: shapeColor }}>
               <div className="fixation-circle"></div>
               <div className="fixation-circle"></div>
               <div className="fixation-circle"></div>
@@ -439,7 +471,7 @@ function App() {
             className="app cursor-hide"
             style={{ backgroundColor }}
           >
-            <div className="fixation-cross" style={{ color: shapeColor }}>
+            <div className="fixation-symbol" style={{ color: shapeColor }}>
               <div className="fixation-circle"></div>
               <div className="fixation-circle"></div>
               <div className="fixation-circle"></div>
@@ -448,6 +480,11 @@ function App() {
               <div className="fixation-circle"></div>
               <div className="fixation-circle"></div>
               <div className="fixation-circle"></div>
+              {gameState === GameStates.DISPLAY && (
+                <div className="fixation-shape">
+                  <Shape type={fixationShape} size={12} color={shapeColor} style={shapeStyle} />
+                </div>
+              )}
             </div>
             {getCurrentShape()}
             {renderDebugElements()}
@@ -460,18 +497,52 @@ function App() {
             className="app choice-container"
             style={{ backgroundColor }}
           >
-            <h2 style={{ color: shapeColor }}>Kokią figūrą matėte?</h2>
-            <div className="shapes-grid">
-              {SHAPES.map(shape => (
-                <div
-                  key={shape}
-                  onClick={() => handleChoice(shape)}
-                  className="shape-choice"
-                  style={{ backgroundColor }}
-                >
-                  <Shape type={shape} isButton size={shapeSize} color={shapeColor} style={shapeStyle} />
+            <div className="shapes-selection">
+              <div className="shape-selection-group">
+                <h2 style={{ color: shapeColor }}>Kokią figūrą matėte centre?</h2>
+                <div className="shapes-grid">
+                  {SHAPES.map(shape => (
+                    <div
+                      key={`fixation-${shape}`}
+                      onClick={() => handleChoice(shape, false)}
+                      className={`shape-choice ${selectedFixationShape === shape ? 'selected' : ''}`}
+                      style={{ backgroundColor }}
+                    >
+                      <Shape type={shape} isButton size={shapeSize * 0.3} color={shapeColor} style={shapeStyle} />
+                    </div>
+                  ))}
+                  <div
+                    onClick={() => handleChoice('unknown', false)}
+                    className={`shape-choice unknown-choice ${selectedFixationShape === 'unknown' ? 'selected' : ''}`}
+                    style={{ backgroundColor }}
+                  >
+                    <div className="unknown-symbol small">?</div>
+                  </div>
                 </div>
-              ))}
+              </div>
+              
+              <div className="shape-selection-group">
+                <h2 style={{ color: shapeColor }}>Kokią figūrą matėte periferijoje?</h2>
+                <div className="shapes-grid">
+                  {SHAPES.map(shape => (
+                    <div
+                      key={`peripheral-${shape}`}
+                      onClick={() => handleChoice(shape, true)}
+                      className={`shape-choice ${selectedPeripheralShape === shape ? 'selected' : ''}`}
+                      style={{ backgroundColor }}
+                    >
+                      <Shape type={shape} isButton size={shapeSize} color={shapeColor} style={shapeStyle} />
+                    </div>
+                  ))}
+                  <div
+                    onClick={() => handleChoice('unknown', true)}
+                    className={`shape-choice unknown-choice ${selectedPeripheralShape === 'unknown' ? 'selected' : ''}`}
+                    style={{ backgroundColor }}
+                  >
+                    <div className="unknown-symbol">?</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         );
@@ -493,9 +564,12 @@ function App() {
               <thead>
                 <tr>
                   <th>Pozicija</th>
-                  <th>Parodyta figūra</th>
-                  <th>Pasirinkta figūra</th>
-                  <th>Teisingai</th>
+                  <th>Parodyta periferinė figūra</th>
+                  <th>Pasirinkta periferinė figūra</th>
+                  <th>Periferinė teisingai</th>
+                  <th>Parodyta centrinė figūra</th>
+                  <th>Pasirinkta centrinė figūra</th>
+                  <th>Centrinė teisingai</th>
                 </tr>
               </thead>
               <tbody>
@@ -503,8 +577,11 @@ function App() {
                   <tr key={index}>
                     <td>{result.position}°</td>
                     <td>{translateShape(result.shownShape)}</td>
-                    <td>{translateShape(result.chosenShape)}</td>
-                    <td>{result.correct ? '1' : '0'}</td>
+                    <td>{translateShape(result.chosenPeripheralShape)}</td>
+                    <td>{result.correctPeripheral ? '1' : '0'}</td>
+                    <td>{translateShape(result.fixationShape)}</td>
+                    <td>{translateShape(result.chosenFixationShape)}</td>
+                    <td>{result.correctFixation ? '1' : '0'}</td>
                   </tr>
                 ))}
               </tbody>
