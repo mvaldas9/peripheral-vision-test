@@ -8,6 +8,8 @@ export const POSITIONS = [0, 45, 90, 135, 180, 225, 270, 315];
 export const DEFAULT_PX_PER_10CM = 505;
 export const DEFAULT_SHAPE_SIZE_CM = 1.57;
 export const DEFAULT_CIRCLE_RADIUS_CM = 7.37;
+export const DEFAULT_SHAPE_COLOR = '#000000';
+export const DEFAULT_BACKGROUND_COLOR = '#FFFFFF';
 
 // Helper function to calculate sizes based on pixels per 10cm
 export const calculateSizes = (pxPer10cm, shapeSizeCm, circleRadiusCm) => {
@@ -19,8 +21,8 @@ export const calculateSizes = (pxPer10cm, shapeSizeCm, circleRadiusCm) => {
 };
 
 // Timing constants (in milliseconds)
-export const BLANK_SCREEN_DURATION = 10;
-export const SHAPE_DISPLAY_DURATION = 10;
+export const BLANK_SCREEN_DURATION = 2000;
+export const SHAPE_DISPLAY_DURATION = 100;
 
 // Generate all possible combinations of shapes and positions
 export const generateGameSequence = () => {

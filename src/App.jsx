@@ -6,6 +6,8 @@ import {
   DEFAULT_PX_PER_10CM,
   DEFAULT_SHAPE_SIZE_CM,
   DEFAULT_CIRCLE_RADIUS_CM,
+  DEFAULT_SHAPE_COLOR,
+  DEFAULT_BACKGROUND_COLOR,
   BLANK_SCREEN_DURATION,
   SHAPE_DISPLAY_DURATION,
   generateGameSequence,
@@ -44,6 +46,8 @@ function App() {
   const [pxPer10cm, setPxPer10cm] = useState(DEFAULT_PX_PER_10CM);
   const [shapeSizeCm, setShapeSizeCm] = useState(DEFAULT_SHAPE_SIZE_CM);
   const [circleRadiusCm, setCircleRadiusCm] = useState(DEFAULT_CIRCLE_RADIUS_CM);
+  const [shapeColor, setShapeColor] = useState(DEFAULT_SHAPE_COLOR);
+  const [backgroundColor, setBackgroundColor] = useState(DEFAULT_BACKGROUND_COLOR);
   
   const { circleRadius, shapeSize } = calculateSizes(pxPer10cm, shapeSizeCm, circleRadiusCm);
 
@@ -157,6 +161,26 @@ function App() {
             />
           </label>
         </div>
+        <div className="calibration-input">
+          <label>
+            Figūros spalva:
+            <input
+              type="color"
+              value={shapeColor}
+              onChange={(e) => setShapeColor(e.target.value)}
+            />
+          </label>
+        </div>
+        <div className="calibration-input">
+          <label>
+            Fono spalva:
+            <input
+              type="color"
+              value={backgroundColor}
+              onChange={(e) => setBackgroundColor(e.target.value)}
+            />
+          </label>
+        </div>
       </div>
     );
   };
@@ -222,7 +246,7 @@ function App() {
           marginTop: `-${shapeSize / 2}px`
         }}
       >
-        <Shape type={shape} size={shapeSize} />
+        <Shape type={shape} size={shapeSize} color={shapeColor} />
       </div>
     );
   };
@@ -274,33 +298,43 @@ function App() {
       case GameStates.BLANK:
       case GameStates.POST_DISPLAY_BLANK:
         return (
-          <div className="blank-screen">
-            <div className="fixation-dot" />
+          <div 
+            className="blank-screen cursor-hide" 
+            style={{ backgroundColor }}
+          >
+            <div className="fixation-dot" style={{ backgroundColor: shapeColor }} />
             {renderDebugElements()}
           </div>
         );
 
       case GameStates.DISPLAY:
         return (
-          <>
-            <div className="fixation-dot" />
+          <div 
+            className="cursor-hide"
+            style={{ backgroundColor }}
+          >
+            <div className="fixation-dot" style={{ backgroundColor: shapeColor }} />
             {getCurrentShape()}
             {renderDebugElements()}
-          </>
+          </div>
         );
 
       case GameStates.CHOICE:
         return (
-          <div className="choice-container">
-            <h2>Kokią figūrą matėte?</h2>
+          <div 
+            className="choice-container"
+            style={{ backgroundColor }}
+          >
+            <h2 style={{ color: shapeColor }}>Kokią figūrą matėte?</h2>
             <div className="shapes-grid">
               {SHAPES.map(shape => (
                 <div
                   key={shape}
                   onClick={() => handleChoice(shape)}
                   className="shape-choice"
+                  style={{ backgroundColor }}
                 >
-                  <Shape type={shape} isButton size={shapeSize} />
+                  <Shape type={shape} isButton size={shapeSize} color={shapeColor} />
                 </div>
               ))}
             </div>

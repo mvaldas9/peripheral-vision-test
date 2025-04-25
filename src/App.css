@@ -90,6 +90,18 @@
 .choice-container {
   text-align: center;
   padding: 2rem;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s;
+}
+
+.choice-container h2 {
+  margin-bottom: 2rem;
+  transition: color 0.3s;
 }
 
 .shapes-grid {
@@ -104,20 +116,11 @@
   cursor: pointer;
   padding: 1rem;
   border-radius: 8px;
-  background-color: white;
-  transition: transform 0.2s;
+  transition: transform 0.2s, background-color 0.3s;
 }
 
 .shape-choice:hover {
   transform: scale(1.1);
-}
-
-.shape-button {
-  fill: var(--primary-color);
-}
-
-.shape-button:hover {
-  fill: var(--secondary-color);
 }
 
 .results {
@@ -316,6 +319,30 @@ body {
   transition: background-color 0.2s;
 }
 
-.copy-button:hover {
+.copy-button:hover {  
   background-color: #1a252f;
+}
+
+.cursor-hide {
+  cursor: none;
+  height: 100vh;
+  width: 100vw;
+}
+
+.calibration-input input[type="color"] {
+  width: 60px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid var(--primary-color);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.calibration-input input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.calibration-input input[type="color"]::-webkit-color-swatch {
+  border: none;
+  border-radius: 3px;
 }

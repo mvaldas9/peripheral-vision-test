@@ -2,7 +2,7 @@ import React from 'react';
 
 const DEFAULT_SIZE = 60;
 
-const Shape = ({ type, position = 0, isButton = false, size = DEFAULT_SIZE }) => {
+const Shape = ({ type, position = 0, isButton = false, size = DEFAULT_SIZE, color = '#000000' }) => {
   const getShapePath = () => {
     const half = size / 2;
     
@@ -23,19 +23,24 @@ const Shape = ({ type, position = 0, isButton = false, size = DEFAULT_SIZE }) =>
         }
         return <polygon points={points.join(' ')} />;
       }
-      case 'cross':
-        const thickness = size / 6;
+      case 'cross': {
+        const thickness = size / 10;
+        const offset = thickness / Math.SQRT2; // Adjust for 45-degree rotation
         return (
-          <path d={`
-            M${half - thickness} 0 
-            h${thickness * 2} v${half - thickness} 
-            h${half - thickness} v${thickness * 2} 
-            h-${half - thickness} v${half - thickness} 
-            h-${thickness * 2} v-${half - thickness} 
-            h-${half - thickness} v-${thickness * 2} 
-            h${half - thickness}z
-          `} />
+          <path
+            transform={`rotate(45, ${half}, ${half})`}
+            d={`
+              M${half - thickness} 0 
+              h${thickness * 2} v${half - thickness} 
+              h${half - thickness} v${thickness * 2} 
+              h-${half - thickness} v${half - thickness} 
+              h-${thickness * 2} v-${half - thickness} 
+              h-${half - thickness} v-${thickness * 2} 
+              h${half - thickness}z
+            `}
+          />
         );
+      }
       default:
         return null;
     }
@@ -53,6 +58,7 @@ const Shape = ({ type, position = 0, isButton = false, size = DEFAULT_SIZE }) =>
       height={size} 
       style={style}
       className={isButton ? 'shape-button' : ''}
+      fill={color}
     >
       {getShapePath()}
     </svg>
