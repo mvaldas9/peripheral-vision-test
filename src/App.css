@@ -414,3 +414,19 @@ body {
 .start-button:active {
   background-color: #3d8b40;
 }
+
+.style-select {
+  width: 150px;
+  padding: 0.5rem;
+  border: 1px solid var(--primary-color);
+  border-radius: 4px;
+  text-align: center;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.style-select:focus {
+  outline: none;
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}

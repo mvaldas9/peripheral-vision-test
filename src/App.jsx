@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import Shape from './components/Shape';
+import Shape, { ShapeStyles } from './components/Shape';
 import {
   SHAPES,
   POSITIONS,
@@ -69,6 +69,9 @@ function App() {
     const saved = localStorage.getItem('shapeDuration');
     return saved ? Number(saved) : SHAPE_DISPLAY_DURATION;
   });
+  const [shapeStyle, setShapeStyle] = useState(() => {
+    return localStorage.getItem('shapeStyle') || ShapeStyles.FILLED;
+  });
   
   const { circleRadius, shapeSize } = calculateSizes(pxPer10cm, shapeSizeCm, circleRadiusCm);
 
@@ -81,7 +84,8 @@ function App() {
     localStorage.setItem('backgroundColor', backgroundColor);
     localStorage.setItem('blankDuration', blankDuration);
     localStorage.setItem('shapeDuration', shapeDuration);
-  }, [pxPer10cm, shapeSizeCm, circleRadiusCm, shapeColor, backgroundColor, blankDuration, shapeDuration]);
+    localStorage.setItem('shapeStyle', shapeStyle);
+  }, [pxPer10cm, shapeSizeCm, circleRadiusCm, shapeColor, backgroundColor, blankDuration, shapeDuration, shapeStyle]);
 
   const startGame = useCallback(() => {
     setSequence(generateGameSequence());
@@ -240,6 +244,22 @@ function App() {
             />
           </label>
         </div>
+        <div className="calibration-input">
+          <label>
+            Figūros stilius:
+            <select
+              value={shapeStyle}
+              onChange={(e) => setShapeStyle(e.target.value)}
+              className="style-select"
+            >
+              <option value={ShapeStyles.FILLED}>Užpildyta</option>
+              <option value={ShapeStyles.THICK_BORDER}>Storas kontūras</option>
+              <option value={ShapeStyles.THIN_BORDER}>Plonas kontūras</option>
+              <option value={ShapeStyles.THICK_BORDER_DASHED}>Storas brūkšninis kontūras</option>
+              <option value={ShapeStyles.THIN_BORDER_DASHED}>Plonas brūkšninis kontūras</option>
+            </select>
+          </label>
+        </div>
         <button 
           className="start-button"
           onClick={startGame}
@@ -311,7 +331,7 @@ function App() {
           marginTop: `-${shapeSize / 2}px`
         }}
       >
-        <Shape type={shape} size={shapeSize} color={shapeColor} />
+        <Shape type={shape} size={shapeSize} color={shapeColor} style={shapeStyle} />
       </div>
     );
   };
@@ -399,7 +419,7 @@ function App() {
                   className="shape-choice"
                   style={{ backgroundColor }}
                 >
-                  <Shape type={shape} isButton size={shapeSize} color={shapeColor} />
+                  <Shape type={shape} isButton size={shapeSize} color={shapeColor} style={shapeStyle} />
                 </div>
               ))}
             </div>
