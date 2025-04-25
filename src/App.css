@@ -78,8 +78,8 @@
 
 .fixation-dot {
   position: absolute;
-  width: 2px;
-  height: 2px;
+  width: 6px;
+  height: 6px;
   background-color: black;
   border-radius: 50%;
   top: 50%;
@@ -296,4 +296,26 @@ body {
   font-size: 0.9rem;
   color: rgba(0, 0, 0, 0.5);
   font-style: italic;
+}
+
+.results-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin: 2rem 0;
+}
+
+.copy-button {
+  padding: .8rem 2rem;
+  font-size: .8rem;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.copy-button:hover {
+  background-color: #1a252f;
 }

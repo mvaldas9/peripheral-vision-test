@@ -19,8 +19,8 @@ export const calculateSizes = (pxPer10cm, shapeSizeCm, circleRadiusCm) => {
 };
 
 // Timing constants (in milliseconds)
-export const BLANK_SCREEN_DURATION = 3000;
-export const SHAPE_DISPLAY_DURATION = 100;
+export const BLANK_SCREEN_DURATION = 10;
+export const SHAPE_DISPLAY_DURATION = 10;
 
 // Generate all possible combinations of shapes and positions
 export const generateGameSequence = () => {

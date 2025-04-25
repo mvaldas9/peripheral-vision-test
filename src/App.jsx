@@ -227,6 +227,36 @@ function App() {
     );
   };
 
+  const copyResultsToClipboard = () => {
+    // Create header
+    const header = ['Pozicija', 'Parodyta figūra', 'Pasirinkta figūra', 'Teisingai'].join('\t');
+    
+    // Create rows
+    const rows = results.map(result => [
+      `${result.position}°`,
+      translateShape(result.shownShape),
+      translateShape(result.chosenShape),
+      result.correct ? '1' : '0'
+    ].join('\t'));
+
+    // Combine header and rows
+    const textToCopy = [header, ...rows].join('\n');
+
+    // Copy to clipboard
+    navigator.clipboard.writeText(textToCopy)
+      .then(() => {
+        // Visual feedback that copy was successful
+        const button = document.getElementById('copy-button');
+        button.textContent = 'Nukopijuota!';
+        setTimeout(() => {
+          button.textContent = 'Kopijuoti rezultatus';
+        }, 2000);
+      })
+      .catch(err => {
+        console.error('Failed to copy:', err);
+      });
+  };
+
   const renderContent = () => {
     switch (gameState) {
       case GameStates.INTRO:
@@ -281,6 +311,15 @@ function App() {
         return (
           <div className="results">
             <h2>Testo rezultatai</h2>
+            <div className="results-actions">
+              <button 
+                id="copy-button"
+                onClick={copyResultsToClipboard} 
+                className="copy-button"
+              >
+                Kopijuoti rezultatus
+              </button>
+            </div>
             <table>
               <thead>
                 <tr>
@@ -296,14 +335,11 @@ function App() {
                     <td>{result.position}°</td>
                     <td>{translateShape(result.shownShape)}</td>
                     <td>{translateShape(result.chosenShape)}</td>
-                    <td>{result.correct ? '✓' : '✗'}</td>
+                    <td>{result.correct ? '1' : '0'}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
-            <button onClick={startGame} className="restart-button">
-              Pradėti naują testą
-            </button>
           </div>
         );
 
