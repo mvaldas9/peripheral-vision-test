@@ -110,15 +110,33 @@ function App() {
     // If both shapes have been selected, proceed
     if ((isPeripheral && selectedFixationShape) || (!isPeripheral && selectedPeripheralShape)) {
       const current = sequence[currentIndex];
+      const chosenFixationShape = isPeripheral ? selectedFixationShape : selectedShape;
+      const isFixationCorrect = fixationShape === chosenFixationShape;
+
+      // Add result to results array
       setResults(prev => [...prev, {
         position: current.position,
         shownShape: current.shape,
         chosenPeripheralShape: isPeripheral ? selectedShape : selectedPeripheralShape,
         correctPeripheral: current.shape === (isPeripheral ? selectedShape : selectedPeripheralShape),
         fixationShape: fixationShape,
-        chosenFixationShape: isPeripheral ? selectedFixationShape : selectedShape,
-        correctFixation: fixationShape === (isPeripheral ? selectedFixationShape : selectedShape)
+        chosenFixationShape: chosenFixationShape,
+        correctFixation: isFixationCorrect,
+        isRetry: current.isRetry,
+        originalIndex: current.originalIndex
       }]);
+
+      // If fixation shape was incorrect or unknown, and not already a retry, add it to the end of sequence
+      if ((!isFixationCorrect || chosenFixationShape === 'unknown') && !current.isRetry) {
+        setSequence(prev => [
+          ...prev,
+          {
+            ...current,
+            isRetry: true,
+            originalIndex: currentIndex
+          }
+        ]);
+      }
 
       if (currentIndex === sequence.length - 1) {
         setGameState(GameStates.RESULTS);
@@ -399,18 +417,22 @@ function App() {
       'Periferinė teisingai',
       'Parodyta centrinė figūra',
       'Pasirinkta centrinė figūra',
-      'Centrinė teisingai'
+      'Centrinė teisingai',
+      'Pakartotinis bandymas',
+      'Originalaus bandymo nr.'
     ].join('\t');
     
     // Create rows
-    const rows = results.map(result => [
+    const rows = results.map((result, index) => [
       `${result.position}°`,
       translateShape(result.shownShape),
       translateShape(result.chosenPeripheralShape),
       result.correctPeripheral ? '1' : '0',
       translateShape(result.fixationShape),
       translateShape(result.chosenFixationShape),
-      result.correctFixation ? '1' : '0'
+      result.correctFixation ? '1' : '0',
+      result.isRetry ? '1' : '0',
+      result.isRetry ? (result.originalIndex + 1).toString() : ''
     ].join('\t'));
 
     // Combine header and rows
@@ -563,6 +585,7 @@ function App() {
             <table>
               <thead>
                 <tr>
+                  <th>Nr.</th>
                   <th>Pozicija</th>
                   <th>Parodyta periferinė figūra</th>
                   <th>Pasirinkta periferinė figūra</th>
@@ -570,11 +593,14 @@ function App() {
                   <th>Parodyta centrinė figūra</th>
                   <th>Pasirinkta centrinė figūra</th>
                   <th>Centrinė teisingai</th>
+                  <th>Pakartotinis bandymas</th>
+                  <th>Originalaus bandymo nr.</th>
                 </tr>
               </thead>
               <tbody>
                 {results.map((result, index) => (
-                  <tr key={index}>
+                  <tr key={index} className={result.isRetry ? 'retry-row' : ''}>
+                    <td>{index + 1}</td>
                     <td>{result.position}°</td>
                     <td>{translateShape(result.shownShape)}</td>
                     <td>{translateShape(result.chosenPeripheralShape)}</td>
@@ -582,6 +608,8 @@ function App() {
                     <td>{translateShape(result.fixationShape)}</td>
                     <td>{translateShape(result.chosenFixationShape)}</td>
                     <td>{result.correctFixation ? '1' : '0'}</td>
+                    <td>{result.isRetry ? '1' : '0'}</td>
+                    <td>{result.isRetry ? result.originalIndex + 1 : ''}</td>
                   </tr>
                 ))}
               </tbody>

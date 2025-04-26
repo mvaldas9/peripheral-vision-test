@@ -29,7 +29,12 @@ export const generateGameSequence = () => {
   const sequence = [];
   SHAPES.forEach(shape => {
     POSITIONS.forEach(position => {
-      sequence.push({ shape, position });
+      sequence.push({ 
+        shape, 
+        position,
+        isRetry: false, // Flag to indicate if this is a retry trial
+        originalIndex: null // Reference to original trial if this is a retry
+      });
     });
   });
   
