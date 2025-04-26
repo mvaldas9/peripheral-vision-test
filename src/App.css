@@ -331,6 +331,7 @@ body {
 .calibration-line {
   position: relative;
   height: 2px;
+  align-self: start;
   background: repeating-linear-gradient(
     to right,
     var(--primary-color) 0,
