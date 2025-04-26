@@ -153,10 +153,7 @@ function App() {
   };
 
   const handleKeyPress = useCallback((e) => {
-    if (e.code === 'Space' && gameState === GameStates.INTRO) {
-      e.preventDefault();
-      startGame();
-    } else if (e.code === 'KeyD') {
+    if (e.code === 'KeyD') {
       e.preventDefault();
       setIsDebugMode(prev => !prev);
     }
@@ -192,8 +189,6 @@ function App() {
   }, [gameState, blankDuration, shapeDuration]);
 
   const renderCalibration = () => {
-    if (!isDebugMode) return null;
-
     return (
       <div className="calibration">
         {/* Screen calibration section */}
@@ -275,7 +270,7 @@ function App() {
           <h3>Testo nustatymai</h3>
           <div className="calibration-input">
             <label>
-              Apskritimo spindulys (cm):
+              Periferinio apskritimo spindulys (cm):
               <input
                 type="number"
                 value={circleRadiusCm}
@@ -473,10 +468,8 @@ function App() {
         return (
           <div className="intro">
             <h1>Periferinio matymo testas</h1>
-            <p>Paspauskite TARPO klavišą, kad pradėtumėte testą</p>
             <p>Ekrane trumpai pasirodys figūros.</p>
-            <p>Pabandykite atpažinti, kokią figūrą matėte.</p>
-            <p className="debug-hint">Paspauskite 'D' mygtuką, kad įjungtumėte derinimo režimą</p>
+            <p>Pabandykite atpažinti, kokias figūrą matėte.</p>
             {renderCalibration()}
           </div>
         );
