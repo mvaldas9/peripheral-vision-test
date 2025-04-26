@@ -409,47 +409,62 @@ function App() {
   };
 
   const copyResultsToClipboard = () => {
-    // Create header
-    const header = [
-      'Pozicija',
-      'Parodyta periferinė figūra',
-      'Pasirinkta periferinė figūra',
-      'Periferinė teisingai',
-      'Parodyta centrinė figūra',
-      'Pasirinkta centrinė figūra',
-      'Centrinė teisingai',
-      'Pakartotinis bandymas',
-      'Originalaus bandymo nr.'
-    ].join('\t');
-    
-    // Create rows
-    const rows = results.map((result, index) => [
-      `${result.position}°`,
-      translateShape(result.shownShape),
-      translateShape(result.chosenPeripheralShape),
-      result.correctPeripheral ? '1' : '0',
-      translateShape(result.fixationShape),
-      translateShape(result.chosenFixationShape),
-      result.correctFixation ? '1' : '0',
-      result.isRetry ? '1' : '0',
-      result.isRetry ? (result.originalIndex + 1).toString() : ''
-    ].join('\t'));
-
-    // Combine header and rows
-    const textToCopy = [header, ...rows].join('\n');
-
-    // Copy to clipboard
-    navigator.clipboard.writeText(textToCopy)
-      .then(() => {
-        const button = document.getElementById('copy-button');
-        button.textContent = 'Nukopijuota!';
-        setTimeout(() => {
-          button.textContent = 'Kopijuoti rezultatus';
-        }, 2000);
-      })
-      .catch(err => {
-        console.error('Failed to copy:', err);
+    try {
+      // Create header
+      const header = [
+        'Nr.',
+        'Pozicija',
+        'Parodyta periferinė figūra',
+        'Pasirinkta periferinė figūra',
+        'Periferinė teisingai',
+        'Parodyta centrinė figūra',
+        'Pasirinkta centrinė figūra',
+        'Centrinė teisingai',
+        'Pakartotinis bandymas',
+        'Originalaus bandymo nr.'
+      ].join('\t');
+      
+      // Create rows
+      const rows = results.map((result, index) => {
+        const row = [
+          (index + 1).toString(),
+          `${result.position}°`,
+          translateShape(result.shownShape),
+          translateShape(result.chosenPeripheralShape),
+          result.correctPeripheral ? '1' : '0',
+          translateShape(result.fixationShape),
+          translateShape(result.chosenFixationShape),
+          result.correctFixation ? '1' : '0',
+          result.isRetry ? '1' : '0',
+          result.isRetry ? (result.originalIndex + 1).toString() : ''
+        ];
+        return row.join('\t');
       });
+
+      // Combine header and rows
+      const textToCopy = [header, ...rows].join('\n');
+
+      // For debugging
+      console.log('Copying text:', textToCopy);
+
+      // Copy to clipboard using a temporary textarea element
+      const textarea = document.createElement('textarea');
+      textarea.value = textToCopy;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+
+      // Update button text
+      const button = document.getElementById('copy-button');
+      button.textContent = 'Nukopijuota!';
+      setTimeout(() => {
+        button.textContent = 'Kopijuoti rezultatus';
+      }, 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+      alert('Nepavyko nukopijuoti rezultatų. Bandykite dar kartą.');
+    }
   };
 
   const renderContent = () => {
