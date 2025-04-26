@@ -1,12 +1,36 @@
-# React + Vite
+# Peripheral Vision Test
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is a web application built with React and Vite that tests peripheral vision capabilities. The app displays shapes in different positions on the screen while maintaining the user's focus on a central point, helping to assess peripheral vision accuracy.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Dynamic shape display in peripheral vision areas
+- Configurable test parameters:
+  - Shape size and display duration
+  - Screen calibration options
+  - Custom colors and styles
+- Results tracking and analysis
+- Support for multiple shapes (circle, square, triangle, star, cross)
 
-## Expanding the ESLint configuration
+## Technical Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- React for the UI framework
+- Vite for build tooling and development server
+- Local storage for settings persistence
+- Modern CSS for styling
+
+## Getting Started
+
+1. Clone the repository
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Run the development server:
+   ```bash
+   npm run dev
+   ```
+
+## Usage
+
+The test presents shapes in your peripheral vision while maintaining focus on a central point. After each display, you'll need to identify both the central and peripheral shapes shown. The application tracks your accuracy and provides detailed results.
